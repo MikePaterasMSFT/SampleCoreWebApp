@@ -12,9 +12,10 @@ variables:
 
 steps:
 - script: dotnet build $(solution) --configuration $(buildConfiguration)
-  displayName: 'dotnet build $(buildConfiguration)'
+  displayName: 'Building ASP.Net Core App'
 
 - task: DotNetCoreCLI@2
+  displayName: 'Preparing Package to be Deployed'
   inputs:
     command: publish
     publishWebProjects: True
@@ -22,7 +23,7 @@ steps:
     zipAfterPublish: True
 
 - task: AzureCLI@1
-  displayName: 'Azure CLI'
+  displayName: 'Provisioning Azure Resources'
   inputs:
     azureSubscription: '$(azureSubscription)'
     scriptLocation: inlineScript
@@ -36,6 +37,7 @@ steps:
     webAppName: $(webAppName)
 
 - task: AzureRmWebAppDeployment@4
+  displayName: 'Deploying $(webAppName) to Azure App Service'
   inputs:
     ConnectionType: 'AzureRM'
     azureSubscription: $(azureSubscription)
